@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>When Does Your Place Cross 2 °C?</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>When does your part of the world cross +2&nbsp;°C?</h1>
+    <p class="sub">
+      Annual near-surface air temperature from the NOAA-GFDL <b>GFDL-ESM4</b> climate model (CMIP6, run r1i1p1f1),
+      averaged from monthly to yearly values, regridded to 5°&nbsp;×&nbsp;5° cells, and shown as the change from each
+      cell's own 1850–1900 average. Map colours use a 10-year centred running mean to smooth out year-to-year weather;
+      1850–2014 is the model's historical run, 2015–2100 follows the scenario you pick.
+    </p>
+  </header>
+
+  <section class="controls" aria-label="Controls">
+    <div class="group">
+      <span class="label">Emissions path</span>
+      <div class="seg" id="scenario">
+        <button data-k="ssp126">Low <small>SSP1-2.6</small></button>
+        <button data-k="ssp245" class="on">Middle <small>SSP2-4.5</small></button>
+        <button data-k="ssp585">High <small>SSP5-8.5</small></button>
+      </div>
+    </div>
+    <div class="group">
+      <span class="label">Show</span>
+      <div class="seg" id="mode">
+        <button data-k="year" class="on">Warming in a year</button>
+        <button data-k="cross">Year it crosses…</button>
+      </div>
+    </div>
+    <div class="group" id="yearGroup">
+      <span class="label">Year <b id="yearOut">2050</b></span>
+      <div class="row">
+        <button id="play" class="icon" aria-label="Play">▶</button>
+        <input id="year" type="range" min="1855" max="2095" value="2050" step="1">
+      </div>
+    </div>
+    <div class="group hidden" id="threshGroup">
+      <span class="label">Threshold <b id="threshOut">+2.0 °C</b></span>
+      <input id="thresh" type="range" min="0.5" max="6" value="2" step="0.5">
+    </div>
+  </section>
+
+  <section class="stage">
+    <div class="mapwrap">
+      <svg id="map" viewBox="0 0 960 500" role="img" aria-label="World map of temperature change"></svg>
+      <div id="legend"></div>
+      <div class="tours">
+        <span class="label">Jump to</span>
+        <button data-lat="82.5" data-lon="-2.5">Arctic Ocean</button>
+        <button data-lat="57.5" data-lon="-32.5">North Atlantic "warming hole"</button>
+        <button data-lat="-7.5" data-lon="-57.5">Amazon</button>
+        <button data-lat="32.5" data-lon="-117.5">San Diego</button>
+        <button data-lat="-2.5" data-lon="-152.5">Equatorial Pacific</button>
+      </div>
+    </div>
+    <aside class="detail">
+      <h2 id="detailTitle">Click any cell on the map</h2>
+      <p id="detailStat" class="stat"></p>
+      <svg id="line" viewBox="0 0 420 300" role="img" aria-label="Temperature change over time at the selected cell"></svg>
+      <div class="keys">
+        <span><i style="background:var(--ssp126)"></i>Low</span>
+        <span><i style="background:var(--ssp245)"></i>Middle</span>
+        <span><i style="background:var(--ssp585)"></i>High</span>
+        <span><i class="dash"></i>Global mean (selected path)</span>
+      </div>
+      <p class="hint">Faint lines are single years, bold lines the 10-year mean. Click the chart to move the map to that year.</p>
+    </aside>
+  </section>
+  <div id="tip" class="tip" hidden></div>
+
+  <section class="writeup">
+    <h2>Design rationale</h2>
+    <p class="todo">[Team: write this section in your own words. Cover why a map + linked line chart, the colour scales, the 10-year smoothing and 5° regridding, the "year it crosses" mode, and what alternatives you tried.]</p>
+    <h2>Development process</h2>
+    <p class="todo">[Team: how the work was split between members, roughly how many people-hours, and what took the most time.]</p>
+    <h2>Data</h2>
+    <p>CMIP6 GFDL-ESM4 (NOAA Geophysical Fluid Dynamics Laboratory), variable <code>tas</code>, monthly, experiments
+      historical, ssp126, ssp245 and ssp585, read from the public CMIP6 archive on Google Cloud. One model and one
+      ensemble member: other models warm more or less (GFDL-ESM4 is on the low side of CMIP6), so treat the numbers as
+      one plausible future, not a forecast. Processing code: <code>scripts/prepare_data.py</code>.</p>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
