@@ -77,9 +77,47 @@
 
   <section class="writeup">
     <h2>Design rationale</h2>
-    <p class="todo">[Team: write this section in your own words. Cover why a map + linked line chart, the colour scales, the 10-year smoothing and 5° regridding, the "year it crosses" mode, and what alternatives you tried.]</p>
+    <p>The question is about place and time at once: where does it get warm first, and when? A map alone answers
+      "where" for one year at a time, and a line chart alone answers "when" for one place. So the page links the two.
+      The map is the overview, and clicking any square opens that square's full 1850 to 2100 history beside it, with
+      all three emissions paths and the global average for comparison. Clicking the chart moves the map to that year,
+      so either view can drive the other.</p>
+    <p>The map uses the Equal Earth projection because it keeps areas true. On Mercator the Arctic, which warms the
+      most, would look several times bigger than it is and exaggerate the story.</p>
+    <p>Warming is coloured on a red to blue diverging scale centred on zero, so cooling and warming read as opposites
+      and "no change" is white. The scale runs from −3 to +9 °C rather than symmetric limits, because very little of
+      the map ever cools much. I first used −4 to +12 °C so the hottest Arctic squares would not clip, but that made the
+      2050 map almost white, and most readers will look at the middle of the century. Squares beyond +9 °C clip to the
+      darkest red, and the hover tooltip gives the exact value.</p>
+    <p>The "Year it crosses" view exists because the year slider makes you watch 240 frames to answer one question. It
+      collapses the whole series into one number per square: the first year after which the square stays above the
+      threshold you pick. That is a single ordered quantity, so it gets a single-hue scale (dark red for early, pale
+      yellow for late) instead of the diverging one, and grey means it does not happen by 2095. The threshold is a
+      slider rather than fixed at 2 °C so you can compare the Paris targets of 1.5 and 2 °C with higher levels.</p>
+    <p>Data transformations: monthly values are averaged to years, the model's 1° grid is averaged to 5° squares, and
+      each square is measured against its own 1850 to 1900 average. The 5° grid keeps the data file around 3 MB, small
+      enough to load in a browser, while the large patterns stay visible. The map and the crossing years use a 10-year
+      centred running mean, because single years are mostly weather noise and a lucky warm year would otherwise count as
+      a crossing. That mean only has a full window from 1855 to 2095, so the slider and the crossing calculation stop
+      there. An earlier version ran to 2100 and showed some squares crossing in 2100 just because the window was
+      shrinking at the end of the series. The line chart still shows the raw yearly values as faint lines under the
+      smoothed one, so nothing is hidden.</p>
+    <p>The "Jump to" buttons point at places where the interaction shows something a static global chart cannot: the
+      Arctic passing +2 °C decades before the world does, and a patch of the North Atlantic that cools even on the high
+      emissions path.</p>
+    <p>Alternatives considered: three small-multiple maps, one per scenario, which made each map too small to read
+      on a laptop; an animation with no linked chart, which shows the pattern but not the numbers for any one place;
+      and only the global average line, which hides the fact that the question has a different answer depending on
+      where you live.</p>
     <h2>Development process</h2>
-    <p class="todo">[Team: how the work was split between members, roughly how many people-hours, and what took the most time.]</p>
+    <p>I did this project alone, because I was not placed on a team. The code and this writeup were written with help
+      from an AI assistant (Claude), which my instructor approved for my situation. I chose the dataset and the question,
+      reviewed the charts, and decided what to keep and change.</p>
+    <p>The most time went into getting the data. The CMIP6 files on Google Cloud needed specific library versions and
+      a non-standard calendar package before they would open, and that took several attempts. Next was tuning the
+      visualization: the colour scale range, the edge effect of the running mean at 2100, and the line chart's axis,
+      which at first cut off the global average line for squares that warm less than the world. In total the project
+      took about 6 hours.</p>
     <h2>Data</h2>
     <p>CMIP6 GFDL-ESM4 (NOAA Geophysical Fluid Dynamics Laboratory), variable <code>tas</code>, monthly, experiments
       historical, ssp126, ssp245 and ssp585, read from the public CMIP6 archive on Google Cloud. One model and one
